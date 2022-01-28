@@ -2,15 +2,18 @@ package com.z9devs.controllers;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
+import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,6 +49,14 @@ public class DocumentController
 	public ResponseEntity<LinkedHashMap<String, LinkedHashMap<String, String>>> processDirectory() 
 	{
 		return mantainance.processDirectory();
+	}
+	
+	@GetMapping(path = "/search")
+	public ResponseEntity<SearchHit[]> search(@RequestParam(value = "skill") List<String> skills) 
+	{
+		while (skills.size() < 10)
+			skills.add("");
+		return new ResponseEntity<>(eController.searchDocuments(skills), HttpStatus.OK);
 	}
 
 	// Endpoint used to upload, store and index a nuew file
