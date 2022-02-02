@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.lucene.queryparser.flexible.core.builders.QueryBuilder;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
@@ -54,6 +56,24 @@ public class ElasticsearchController
 	{
 		return highLevelClient.exists(new GetRequest(INDEX_NAME, fileName), RequestOptions.DEFAULT);
 	}
+
+	public SearchHit[] allDocuments()
+	{
+		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+		sourceBuilder.query(QueryBuilders.matchAllQuery());
+		SearchRequest sr = new SearchRequest()
+				.indices(INDEX_NAME)
+				.source(sourceBuilder);
+		SearchResponse searchResponse;
+		try {
+			searchResponse = highLevelClient.search(sr, RequestOptions.DEFAULT);
+			return searchResponse.getHits().getHits();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	public SearchHit[] searchDocuments(List<String> skills)
 	{
@@ -93,5 +113,25 @@ public class ElasticsearchController
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public boolean deleteDocument(String documentName)
+	{
+		DeleteRequest request = new DeleteRequest(
+		        INDEX_NAME,    
+		        documentName);
+		request.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
+		
+		try {
+			DeleteResponse deleteResponse = highLevelClient.delete(
+			        request, RequestOptions.DEFAULT);
+			return true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			return false;
+		}
+
 	}
 }

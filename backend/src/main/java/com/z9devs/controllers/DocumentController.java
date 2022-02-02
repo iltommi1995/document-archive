@@ -1,23 +1,33 @@
 package com.z9devs.controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
 import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.lowagie.text.pdf.codec.Base64.InputStream;
 import com.z9devs.dao.DocumentRepo;
 import com.z9devs.elasticsearch.ElasticsearchController;
 import com.z9devs.imageService.ImageProcessor;
@@ -42,6 +52,9 @@ public class DocumentController
 
 	@Autowired
 	private ImageProcessor iProcessor;
+	
+	@Value("${documents_directory}")
+	private String UPLOAD_FOLDER;
 
 	// Checks all documents in "documents_directory" and, if they are not stored
 	// in the databased or indexed with elasticsearch, they get stored and indexed
@@ -58,6 +71,20 @@ public class DocumentController
 			skills.add("");
 		return new ResponseEntity<>(eController.searchDocuments(skills), HttpStatus.OK);
 	}
+	
+	@GetMapping(path = "/documents")
+	public ResponseEntity<SearchHit[]> getAllDocuments() 
+	{
+		return new ResponseEntity<>(eController.allDocuments(), HttpStatus.OK);
+	}
+	
+	@GetMapping(value = "/files/{file_name}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	@ResponseBody
+	public FileSystemResource getFile(@PathVariable("file_name") String fileName) 
+	{
+	    return new FileSystemResource(new File(UPLOAD_FOLDER + fileName));
+	}
+
 
 	// Endpoint used to upload, store and index a nuew file
 	@PostMapping(path = "/storeDocument", consumes = { "multipart/form-data" })
@@ -74,7 +101,7 @@ public class DocumentController
 			if (docRepo.findByFileName(file.getOriginalFilename()).size() == 0) 
 			{
 				// Storing file on file system
-				res.put("Document stored on file system", sService.storeDocument(file) ? "True" : "False");
+				res.put("storedOnFileSystem", sService.storeDocument(file) ? "True" : "False");
 
 				// Extracting file text with Apache Tika or Image Processor
 				String fileText = file.getContentType().contains("image") ? 
@@ -87,24 +114,39 @@ public class DocumentController
 				doc.setFileName(file.getOriginalFilename());
 				doc.setDocumentText(fileText);
 				docRepo.save(doc);
-				res.put("Document stored on database", sService.storeDocument(file) ? "True" : "False");
+				res.put("storedOnDatabase", sService.storeDocument(file) ? "True" : "False");
 
 				// Indexing CV on elasticsearch
-				res.put("Document indexed on elasticsearch", eController.addDocument(doc) ? "True" : "False");
+				res.put("indexedOnElasticsearch", eController.addDocument(doc) ? "True" : "False");
 
 				return new ResponseEntity<>(res, HttpStatus.CREATED);
 			} 
 			else 
 			{
-				res.put("Error", "The document is already stored.");
+				res.put("error", "The document is already stored.");
 				return new ResponseEntity<>(res, HttpStatus.ALREADY_REPORTED);
 			}
 		} 
 		catch (TikaException | IOException e) 
 		{
 			e.printStackTrace();
-			res.put("Error", "Something wrong happened.");
+			res.put("error", "Something wrong happened.");
 			return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
 		}
+	}
+	
+	@DeleteMapping(path="deleteDocument")
+	public ResponseEntity<Map<String, String>> deleteDocument(@RequestParam("documentId") String documentId)
+	{
+		docRepo.deleteByFileName(documentId);
+		System.out.println(documentId);
+		
+		eController.deleteDocument(documentId);
+		
+		File file = new File(UPLOAD_FOLDER + documentId);
+		file.delete();
+		
+		return null;
+		
 	}
 }
