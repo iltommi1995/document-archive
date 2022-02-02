@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import './variables.scss';
+
+// General content structure
+.container {
+    font-family: 'Roboto', sans-serif;
+    min-height: 100vh;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 100px 1fr;
+    overflow-y: hidden;
+
+    .centralContent {
+        grid-area: 2 / 1 / 3 / 1;
+        height: 100%;
+        width: 100%;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+
+        .centralContentGrid {
+            height: 100%;
+            width: 100%;
+            display: grid;
+            grid-template: repeat(10, 1fr) / repeat(12, 1fr);
+            grid-auto-flow: row;
+            grid-auto-rows: 10vh; 
+
+            .searchBox {
+                border: 2px solid black;
+                grid-area: 1 / 1 / 11 / 4;
+                padding: 15px;
+            }
+
+            
+        }
+    }
+}
+
+// Class block with hover
+.hoverBlock{
+    transition: all 0.3s;
+    cursor: pointer;
+    &:hover {
+        margin: 10px;
+    }
+}
+
+// Scrollbar
+::-webkit-scrollbar{
+    width: 9px;
+    height: 9px;
+}
+::-webkit-scrollbar-thumb{
+    background: #049404;
+    border-radius: 30px;
+}
+::-webkit-scrollbar-thumb:hover{
+    background: #024702;
+}
+::-webkit-scrollbar-track{
+    background: #F0F0F0;
+    border-radius: 0px;
+    box-shadow: inset 0px 0px 0px 0px #F0F0F0;
+}
+
+// Animation for home banner
+@keyframes arrowAnimation {
+    0% {bottom: 10px;}
+    50% {bottom: 3px;}
+    100% {bottom: 10px;}
+}
