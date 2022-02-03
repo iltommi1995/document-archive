@@ -49,7 +49,7 @@ export default function DeleteButton(props) {
 
     return (
         <div>
-            <IconButton onClick={handleOpen}>
+            <IconButton color='secondary' onClick={handleOpen}>
                 <DeleteIcon />
             </IconButton>
             <Modal

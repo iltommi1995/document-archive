@@ -39,23 +39,32 @@ export default function SearchBox(props) {
                 documents={props.documents}
                 setDocuments={props.setDocuments}
             />
-            <div>
-                <Typography variant="h6" component="h4">
-                    Searched keywords:
-                </Typography>
-                {keywords.map(kw => {
-                    return (
-                        <Card key={`kw-${kw}`} variant="outlined" className={styles.customCard} >
-                            <Typography >
-                            {kw}
-                            </Typography>
-                            <IconButton color="primary" aria-label="upload picture" component="span" onClick={() => {removeKeyword(kw)}}>
-                                <CancelIcon />
-                            </IconButton>
+            <Typography variant="h6" component="h4">
+                Searched keywords:
+            </Typography>
+            <div className={styles.keywordsContainer}>
+                {keywords.length === 0 ?
+                    (
+                        <Typography >
+                            No keywords selected.
+                        </Typography>
+                    )
+                    :
+                    (
+                        keywords.map(kw => {
+                            return (
+                                <Card key={`kw-${kw}`} variant="outlined" className={styles.customCard} >
+                                    <Typography >
+                                        {kw}
+                                    </Typography>
+                                    <IconButton color="secondary" aria-label="upload picture" component="span" onClick={() => { removeKeyword(kw) }}>
+                                        <CancelIcon />
+                                    </IconButton>
 
-                        </Card>
-                    );
-                })}
+                                </Card>
+                            );
+                        })
+                    )}
             </div>
         </div>
     )

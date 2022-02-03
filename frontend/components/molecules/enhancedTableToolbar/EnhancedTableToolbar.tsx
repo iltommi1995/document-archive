@@ -1,5 +1,4 @@
-import { IconButton, Toolbar, Tooltip, Typography } from "@material-ui/core";
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Toolbar, Typography } from "@material-ui/core";
 import PropTypes from 'prop-types';
 import DeleteButton from "../../atoms/deleteButton/DeleteButton";
 

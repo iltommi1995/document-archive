@@ -19,7 +19,7 @@ export default function RefreshButton(props) {
     };
 
     return (
-        <Button variant="outlined" startIcon={<RefreshIcon />} onClick={refreshFolder}>
+        <Button variant="outlined" color="primary" startIcon={<RefreshIcon />} onClick={refreshFolder}>
             Force folder refresh
         </Button>
     )

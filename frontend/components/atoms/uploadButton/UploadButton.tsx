@@ -32,7 +32,7 @@ export default function UploadButton(props) {
     };
 
     return (
-        <Button variant="outlined" startIcon={<UploadFileIcon />} component="label">
+        <Button variant="outlined" color="primary" startIcon={<UploadFileIcon />} component="label">
             Upload document
             <input
                 type="file"
