@@ -26,12 +26,10 @@ export default function DeleteButton(props) {
         props.documentsSelected.map(document => {
             axios.delete(`${API_BASE_PATH}deleteDocument?documentId=${document}`)
                 .then(res => {
-                    console.log(res.data)
                     props.setDocumentsSelected([]);
 
                     axios.get(`${API_BASE_PATH}documents`)
                         .then(res => {
-                            console.log(res.data)
                             props.setDocuments(res.data)
 
                             handleClose;

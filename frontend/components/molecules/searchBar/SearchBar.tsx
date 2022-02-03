@@ -28,7 +28,6 @@ export default function SearchBar(props) {
     
             axios.get(`${API_BASE_PATH}search?${queryParams}`)
                             .then(res => {
-                                console.log(res.data)
                                 props.setDocuments(res.data)
                             })
                             .catch(err => console.log(err));
@@ -36,7 +35,6 @@ export default function SearchBar(props) {
         else {
                 axios.get(`${API_BASE_PATH}documents`)
                 .then(res => {
-                    console.log("passo da qui")
                     props.setDocuments(res.data)
                 })
                 .catch(err => console.log(err));

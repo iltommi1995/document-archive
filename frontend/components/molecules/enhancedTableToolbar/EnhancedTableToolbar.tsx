@@ -2,7 +2,6 @@ import { Toolbar, Typography } from "@material-ui/core";
 import PropTypes from 'prop-types';
 import DeleteButton from "../../atoms/deleteButton/DeleteButton";
 
-
 export default function EnhancedTableToolbar(props) {
     const { numSelected } = props;
 

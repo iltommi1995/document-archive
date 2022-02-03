@@ -1,11 +1,10 @@
 import SearchBar from '../../molecules/searchBar/SearchBar';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { API_BASE_PATH } from '../../../system-variables';
 import { Card, IconButton, Typography } from '@mui/material';
 import styles from './SearchBox.module.scss';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { typography } from '@mui/system';
 
 export default function SearchBox(props) {
     const [keywords, setKeywords] = useState([]);
@@ -22,7 +21,6 @@ export default function SearchBox(props) {
         if (keywords.length === 0) {
             axios.get(`${API_BASE_PATH}documents`)
                 .then(res => {
-                    console.log("passo da qui")
                     props.setDocuments(res.data)
                 })
                 .catch(err => console.log(err));

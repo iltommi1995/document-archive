@@ -10,7 +10,6 @@ export default function RefreshButton(props) {
             .then(res => {
                 axios.get(`${API_BASE_PATH}documents`)
                     .then(res2 => {
-                        console.log(res2.data)
                         props.setDocuments(res2.data)
                     })
                     .catch(err => console.log(err));
