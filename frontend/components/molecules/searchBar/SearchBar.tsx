@@ -3,6 +3,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { IconButton, InputBase, Paper } from '@material-ui/core';
 import axios from 'axios';
 import { API_BASE_PATH } from '../../../system-variables';
+import styles from './SearchBar.module.scss';
 
 export default function SearchBar(props) {
 
@@ -12,6 +13,7 @@ export default function SearchBar(props) {
         props.keywords.forEach(key => kw.push(key));
         kw.push(props.searchedKeyword);
         props.setKeywords(kw);
+        props.setSearchedKeyword('');
     }
 
     useEffect(() => {
@@ -42,17 +44,14 @@ export default function SearchBar(props) {
      }, [props.keywords]);
 
     return (
-        <Paper
-            component="form"
-            sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}
-        >
+        <Paper component="form" className={styles.searchBar}>
             <InputBase
-                sx={{ ml: 1, flex: 1 }}
                 placeholder="Search for keyword"
                 inputProps={{ 'aria-label': 'search for keyword' }}
+                value={props.searchedKeyword}
                 onChange={(event) => {props.setSearchedKeyword(event.target.value)}}
             />
-            <IconButton sx={{ p: '10px' }} aria-label="search" onClick={searchKeyword}>
+            <IconButton  aria-label="search" onClick={searchKeyword}>
                 <SearchIcon />
             </IconButton>
         </Paper>
